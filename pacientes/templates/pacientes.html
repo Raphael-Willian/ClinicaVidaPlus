@@ -8,6 +8,9 @@
 <body>
     <h2>Lista de Pacientes</h2>
     <h2>Total de Pacientes: {{ total }}</h2>
+    <h2>Média das idades: {{ media_idades|floatformat:2 }}</h2>
+    <h3>Paciente mais velho: {{ paciente_mais_velho.nome_completo }} - ({{ paciente_mais_velho.idade }} anos) - {{ paciente_mais_velho.telefone }}</h3>
+    <h3>Paciente mais novo: {{ paciente_mais_novo.nome_completo }} - ({{ paciente_mais_novo.idade }} anos) - {{ paciente_mais_novo.telefone }}</h3>
 
     <ul>
       {% for paciente in pacientes %}
