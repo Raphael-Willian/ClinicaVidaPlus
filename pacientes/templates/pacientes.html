@@ -7,12 +7,14 @@
 </head>
 <body>
     <h2>Lista de Pacientes</h2>
-<ul>
-  {% for paciente in pacientes %}
-    <li>{{ paciente.nome_completo }} - {{ paciente.idade }} - {{ paciente.telefone }}</li>
-  {% empty %}
-    <li>Nenhum paciente encontrado.</li>
-  {% endfor %}
-</ul>
+    <h2>Total de Pacientes: {{ total }}</h2>
+
+    <ul>
+      {% for paciente in pacientes %}
+        <li>{{ paciente.nome_completo }} - {{ paciente.idade }} - {{ paciente.telefone }}</li>
+      {% empty %}
+        <li>Nenhum paciente encontrado.</li>
+      {% endfor %}
+    </ul>
 </body>
 </html>
