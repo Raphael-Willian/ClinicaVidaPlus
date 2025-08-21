@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lista de Pacientes</title>
+</head>
+<body>
+    <h2>Lista de Pacientes</h2>
+<ul>
+  {% for paciente in pacientes %}
+    <li>{{ paciente.nome_completo }} - {{ paciente.idade }} - {{ paciente.telefone }}</li>
+  {% empty %}
+    <li>Nenhum paciente encontrado.</li>
+  {% endfor %}
+</ul>
+</body>
+</html>

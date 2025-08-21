@@ -1,0 +1,16 @@
+O sistema deve ter:
+
+• Cadastro de pacientes, médicos e exames;
+• Agendamento de consultas e exames, com controle de horários disponíveis;
+• Registro de atendimentos, com histórico de evolução por paciente;
+• Geração de relatórios mensais para a administração;
+
+
+
+A tabela pacientes terá:
+id (gerenciado pelo django)
+nome
+idade
+telefone
+
+A tabela profissionais terá:
