@@ -12,12 +12,20 @@ def total_de_pacientes(request):
         paciente_mais_velho = PacientesCadastrados.objects.order_by('-idade').first()
         paciente_mais_novo = PacientesCadastrados.objects.order_by('idade').first()
 
+        query = request.GET.get('q')
+        if query:
+            pacientes = PacientesCadastrados.objects.filter(nome_completo__icontains=query)
+
+        else:
+            pacientes = PacientesCadastrados.objects.all()
+
         return render(request, "pacientes.html", {
-            "pacientes": lista_de_pacientes,
+            "lista_de_pacientes": lista_de_pacientes,
             "total": numero_de_pacientes,
             "media_idades":media_idades,
             "paciente_mais_velho":paciente_mais_velho,
-            "paciente_mais_novo":paciente_mais_novo
+            "paciente_mais_novo":paciente_mais_novo,
+            "pacientes":pacientes,
+            "query":query
         })
-
 
