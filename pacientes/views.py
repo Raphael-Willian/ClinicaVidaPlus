@@ -1,8 +1,12 @@
-from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotAllowed
+from django.shortcuts import render, redirect
 from .models import PacientesCadastrados
 from django.db.models import Avg
+from .forms import RegistroForm
 
-
+@login_required(login_url="login_command")
 def total_de_pacientes(request):
     if request.method == 'GET':
         lista_de_pacientes = PacientesCadastrados.objects.all() #lista todos os dados da tabela
@@ -28,4 +32,39 @@ def total_de_pacientes(request):
             "pacientes":pacientes,
             "query":query
         })
+    return HttpResponseNotAllowed(['GET'])
 
+def registro_paciente(request):
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            PacientesCadastrados.objects.create(
+                user = user,
+                nome_completo = form.cleaned_data["nome_completo"],
+                idade = form.cleaned_data["idade"],
+                telefone = form.cleaned_data["telefone"]
+            )
+        return redirect("login_command")
+
+    else:
+        form = RegistroForm()
+    return render(request, "register.html", {"form":form})
+
+def login_paciente(request):
+    if request.method == 'POST':
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username = username, password = password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("total_de_pacientes_command")
+        else:
+            return render(request, "login.html", {"error": "Usuário ou senha inválidos"})
+
+    return render(request, "login.html")
+
+def logout_paciente(request):
+    logout(request)
+    return redirect("login_command")
