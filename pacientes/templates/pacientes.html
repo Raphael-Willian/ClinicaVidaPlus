@@ -1,37 +1,187 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Pacientes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #f0fdf4, #dcfce7);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        h2, h3 {
+            color: #16a34a;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        form input, form button, form select, form textarea {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #d1fae5;
+            outline: none;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        form input:focus, form textarea:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 5px rgba(22,163,74,0.5);
+        }
+
+        form button {
+            background-color: #16a34a;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        form button:hover {
+            background-color: #15803d;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats div {
+            background-color: #f0fdf4;
+            padding: 15px 20px;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding: 10px;
+            border-bottom: 1px solid #d1fae5;
+        }
+
+        ul li:last-child {
+            border-bottom: none;
+        }
+
+        a.logout {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #16a34a;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        a.logout:hover {
+            background-color: #15803d;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+        }
+
+        .error-message {
+            color: #dc2626;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h2>Lista de Pacientes</h2>
+    <div class="container">
+        <h2>Lista de Pacientes</h2>
 
-    <form method="get">
-        <input type="text" name="q" placeholder="Buscar paciente" value="{{ query|default:'' }}">
-        <button type="submit">Buscar</button>
-    </form>
+        <!-- Form de busca -->
+        <form method="get">
+            <input type="text" name="q" placeholder="Buscar paciente" value="{{ query|default:'' }}">
+            <button type="submit">Buscar</button>
+        </form>
 
-    <h2>Total de Pacientes: {{ total }}</h2>
-    <h2>Média das idades: {{ media_idades|floatformat:2 }}</h2>
+        <!-- Form de cadastro -->
+        <h3>Cadastrar novo paciente</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Cadastrar</button>
+        </form>
 
-    {% if paciente_mais_velho %}
-        <h3>Paciente mais velho: {{ paciente_mais_velho.nome_completo }} ({{ paciente_mais_velho.idade }} anos) - {{ paciente_mais_velho.telefone }}</h3>
-    {% endif %}
+        <!-- Estatísticas -->
+        <div class="stats">
+            <div>Total: {{ total }}</div>
+            <div>Média de idades: {{ media_idades|floatformat:2 }}</div>
+        </div>
 
-    {% if paciente_mais_novo %}
-        <h3>Paciente mais novo: {{ paciente_mais_novo.nome_completo }} ({{ paciente_mais_novo.idade }} anos) - {{ paciente_mais_novo.telefone }}</h3>
-    {% endif %}
+        {% if paciente_mais_velho %}
+            <h3>Paciente mais velho: {{ paciente_mais_velho.nome_completo }} ({{ paciente_mais_velho.idade }} anos) - {{ paciente_mais_velho.telefone }}</h3>
+        {% endif %}
 
-    <ul>
-      {% for paciente in pacientes %}
-        <li>{{ paciente.nome_completo }} - {{ paciente.idade }} anos - {{ paciente.telefone }}</li>
-      {% empty %}
-        <li>Nenhum paciente encontrado.</li>
-      {% endfor %}
-    </ul>
-    <a href="{% url 'logout_command' %}">Sair</a>
+        {% if paciente_mais_novo %}
+            <h3>Paciente mais novo: {{ paciente_mais_novo.nome_completo }} ({{ paciente_mais_novo.idade }} anos) - {{ paciente_mais_novo.telefone }}</h3>
+        {% endif %}
 
+        <!-- Lista de pacientes -->
+        <ul>
+            {% for paciente in pacientes %}
+                <li>{{ paciente.nome_completo }} - {{ paciente.idade }} anos - {{ paciente.telefone }}</li>
+            {% empty %}
+                <li>Nenhum paciente encontrado.</li>
+            {% endfor %}
+        </ul>
+
+        <a class="logout" href="{% url 'logout_command' %}">Sair</a>
+    </div>
+
+    <script>
+        // Efeito de foco nos inputs
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.style.backgroundColor = '#f0fdf4';
+            });
+            input.addEventListener('blur', () => {
+                input.style.backgroundColor = '#ffffff';
+            });
+        });
+    </script>
 </body>
 </html>

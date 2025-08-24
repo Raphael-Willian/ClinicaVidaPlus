@@ -25,7 +25,15 @@ SECRET_KEY = 'django-insecure-he*4=at!$gc1-3e(ki-e&g5(0^9x*%z^&lod_q)rn%)1w3e8dc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTHENTICATION_BACKENDS = [
+    'profissionais.backends.EmailBackend',  # seu backend customizado
+    'django.contrib.auth.backends.ModelBackend',  # fallback
+]
+
+
 ALLOWED_HOSTS = []
+
+AUTH_USER_MODEL = "profissionais.Profissional"
 
 
 # Application definition
