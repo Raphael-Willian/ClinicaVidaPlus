@@ -6,7 +6,7 @@ from datetime import time
 class ConsultaForm(forms.ModelForm):
     class Meta:
         model = Consulta
-        fields = ["paciente", "profissional", "data", "hora"]
+        fields = ["pacientes", "profissional", "data", "hora"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
