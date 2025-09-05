@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clínica Vida+</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #2e7d32;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1b5e20;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f1f1f1;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Clínica Vida+</h1>
+    <p>Saúde em primeiro lugar</p>
+  </header>
+
+  <main>
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Seção 1: Pré-cadastro -->
+      <section id="cadastro" class="form-section active">
+        <h2>Pré-Cadastro do Paciente</h2>
+
+        {{ paciente_form.nome_completo.label_tag }}
+        {{ paciente_form.nome_completo }}
+
+        {{ paciente_form.idade.label_tag }}
+        {{ paciente_form.idade }}
+
+        {{ paciente_form.telefone.label_tag }}
+        {{ paciente_form.telefone }}
+
+        {{ paciente_form.rg.label_tag }}
+        {{ paciente_form.rg }}
+
+        {{ paciente_form.cpf.label_tag }}
+        {{ paciente_form.cpf }}
+
+        <button type="button" onclick="avancarParaConsulta()">Avançar</button>
+      </section>
+
+      <!-- Seção 2: Agendamento -->
+      <section id="consulta" class="form-section">
+        <h2>Agendamento de Consulta</h2>
+
+        {{ consulta_form.profissional.label_tag }}
+        {{ consulta_form.profissional }}
+
+        {{ consulta_form.data.label_tag }}
+        {{ consulta_form.data }}
+
+        {{ consulta_form.hora_inicio.label_tag }}
+        {{ consulta_form.hora_inicio }}
+
+        {{ consulta_form.hora_fim.label_tag }}
+        {{ consulta_form.hora_fim }}
+
+        <button type="submit">Confirmar Consulta</button>
+      </section>
+    </form>
+
+    <!-- Seção 3: Confirmação -->
+    <section id="confirmacao" class="form-section">
+      <h2>Consulta Agendada com Sucesso!</h2>
+      <p>Obrigado por escolher a Clínica Vida+.</p>
+      <p>Entraremos em contato para confirmar os dados do seu atendimento.</p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Clínica Vida+ | São Lucas - SP
+  </footer>
+
+  <script>
+    function avancarParaConsulta() {
+      const campos = ['id_nome', 'id_idade', 'id_telefone', 'id_rg', 'id_cpf'];
+      for (let id of campos) {
+        const campo = document.getElementById(id);
+        if (!campo.value.trim()) {
+          alert('Por favor, preencha todos os campos.');
+          campo.focus();
+          return;
+        }
+      }
+
+      document.getElementById("cadastro").classList.remove("active");
+      document.getElementById("consulta").classList.add("active");
+    }
+  </script>
+
+</body>
+</html>

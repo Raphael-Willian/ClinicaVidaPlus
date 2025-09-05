@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import marcar_consulta
+from .views import cadastro_consulta, confirmacao
 
 urlpatterns = [
-    path("consultas/", marcar_consulta, name = "lista_consultas")
+    path("cadastro/", cadastro_consulta, name = "cadastro_consulta"),
+    path("confirmacao/", confirmacao, name = "confirmacao")
 ]

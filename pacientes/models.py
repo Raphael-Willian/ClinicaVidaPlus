@@ -6,6 +6,8 @@ class PacientesCadastrados(models.Model):
     nome_completo = models.CharField(max_length=120)
     idade = models.IntegerField(blank=True, null=True)
     telefone = models.CharField(max_length=16, blank=True, null=True)
+    rg = models.CharField(max_length=10, unique=True, blank=False, default=None)
+    cpf = models.CharField(max_length=11, unique=True, blank=False, default=None)
 
     def __str__(self):
         return self.nome_completo
