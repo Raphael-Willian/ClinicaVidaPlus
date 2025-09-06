@@ -6,7 +6,7 @@ from .models import Consulta
 class ConsultaForm(forms.ModelForm):
     class Meta:
         model = Consulta
-        fields = ["pacientes", "profissional", "data", "hora_inicio", "hora_do_fim"]
+        fields = ["profissional", "data", "hora_inicio", "hora_do_fim"]
         widgets = {
             'profissional': forms.Select(attrs={'id': 'id_profissional', 'class': 'form-control'}),
             'data': forms.DateInput(attrs={'type': 'date', 'id': 'id_data', 'class': 'form-control'}),

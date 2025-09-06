@@ -1,28 +1,39 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import Profissional
+from .forms import ProfissionalChangeForm, ProfissionalCreationForm
 
 
 class ProfissionalAdmin(UserAdmin):
+    add_form = ProfissionalCreationForm
+    form = ProfissionalChangeForm
     model = Profissional
-    list_display = ["email", "nome_completo", "is_staff", "is_active"]
+    list_display = ["username", "is_staff", "is_active"]
     list_filter = ["is_staff", "is_active"]
 
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
-        ("Informações pessoais", {"fields": ("nome_completo", "telefone", "especialidade")}),
-        ("Permissões", {"fields": ("is_staff", "is_active", "is_superuser", "groups", "user_permissions")}),
+        (None, {'fields': ('username', 'email', 'password')}),
+        ('Informações pessoais', {'fields': (
+            'nome_completo', 'especialidade', 'telefone', 'nascimento',
+            'cpf', 'genero', 'endereco', 'cep', 'registro_profissional', 'status', 'comissao'
+        )}),
+        ('Permissões', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
     )
 
     add_fieldsets = (
         (None, {
-            "classes": ("wide",),
-            "fields": ("email", "nome_completo", "password1", "password2", "is_staff", "is_active")
+            'classes': ('wide',),
+            'fields': (
+                'username', 'email', 'password1', 'password2',
+                'nome_completo', 'especialidade', 'telefone', 'nascimento',
+                'cpf', 'genero', 'endereco', 'cep', 'registro_profissional', 'status', 'comissao',
+                'is_staff', 'is_active'
+            ),
         }),
     )
 
-    search_fields = ("email",)
-    ordering = ("email",)
+    search_fields = ('email', 'nome_completo', 'cpf')
+    ordering = ('email',)
 
 
 admin.site.register(Profissional, ProfissionalAdmin)

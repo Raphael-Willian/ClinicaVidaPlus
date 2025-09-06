@@ -9,7 +9,7 @@ class Consulta(models.Model):
     hora_inicio = models.TimeField()
     hora_do_fim = models.TimeField()
     observacoes = models.TextField()
-    valor_da_consulta = models.FloatField()
+    valor_da_consulta = models.FloatField(default=70)
     data_de_registro = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -17,4 +17,4 @@ class Consulta(models.Model):
         # impede que o mesmo profissional tenha 2 consultas no mesmo horário
 
     def __str__(self):
-        return f"{self.pacientes.name} - {self.profissional.name} em {self.data} às {self.hora_inicio}"
+        return f"{self.pacientes.nome_completo} - {self.profissional.nome_completo} em {self.data} às {self.hora_inicio}"

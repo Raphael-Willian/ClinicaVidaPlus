@@ -82,7 +82,7 @@
       {% csrf_token %}
 
       <!-- Seção 1: Pré-cadastro -->
-      <section id="cadastro" class="form-section active">
+      <section id="cadastro" class="form-section {% if not mostrar_consulta %}active{% endif %}">
         <h2>Pré-Cadastro do Paciente</h2>
 
         {{ paciente_form.nome_completo.label_tag }}
@@ -104,7 +104,7 @@
       </section>
 
       <!-- Seção 2: Agendamento -->
-      <section id="consulta" class="form-section">
+      <section id="consulta" class="form-section {% if mostrar_consulta %}active{% endif %}">
         <h2>Agendamento de Consulta</h2>
 
         {{ consulta_form.profissional.label_tag }}
@@ -116,8 +116,8 @@
         {{ consulta_form.hora_inicio.label_tag }}
         {{ consulta_form.hora_inicio }}
 
-        {{ consulta_form.hora_fim.label_tag }}
-        {{ consulta_form.hora_fim }}
+        {{ consulta_form.hora_do_fim.label_tag }}
+        {{ consulta_form.hora_do_fim }}
 
         <button type="submit">Confirmar Consulta</button>
       </section>
