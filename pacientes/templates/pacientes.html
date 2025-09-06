@@ -1,187 +1,285 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Pacientes</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Clínica Vida +</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        body {
-            background: linear-gradient(to right, #f0fdf4, #dcfce7);
-            padding: 20px;
-        }
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f9fafb;
+      color: #111827;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
+    /* Sidebar */
+    .sidebar {
+      background: #16a34a;
+      width: 250px;
+      min-width: 80px;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s ease;
+      color: #fff;
+      overflow: hidden;
+    }
 
-        h2, h3 {
-            color: #16a34a;
-            margin-bottom: 15px;
-        }
+    .sidebar.collapsed {
+      width: 80px;
+    }
 
-        form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 18px;
+      font-weight: bold;
+    }
 
-        form input, form button, form select, form textarea {
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #d1fae5;
-            outline: none;
-            transition: 0.3s;
-            font-size: 14px;
-        }
+    .sidebar-header i {
+      margin-right: 8px;
+    }
 
-        form input:focus, form textarea:focus {
-            border-color: #16a34a;
-            box-shadow: 0 0 5px rgba(22,163,74,0.5);
-        }
+    .sidebar.collapsed .sidebar-title {
+      display: none;
+    }
 
-        form button {
-            background-color: #16a34a;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    /* Botão dentro da sidebar */
+    .toggle-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
 
-        form button:hover {
-            background-color: #15803d;
-        }
+    .menu {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0;
+    }
 
-        .stats {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      text-decoration: none; /* remove sublinhado */
+      color: #fff;           /* deixa branco como antes */
+    }
 
-        .stats div {
-            background-color: #f0fdf4;
-            padding: 15px 20px;
-            border-radius: 8px;
-            flex: 1;
-            text-align: center;
-            color: #16a34a;
-            font-weight: bold;
-        }
+    .menu-item:hover {
+      background: rgba(255,255,255,0.2);
+      text-decoration: none; /* garante que não apareça sublinhado no hover */
+    }
 
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
 
-        ul li {
-            padding: 10px;
-            border-bottom: 1px solid #d1fae5;
-        }
+    .menu-item i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
 
-        ul li:last-child {
-            border-bottom: none;
-        }
+    .sidebar.collapsed .menu-item span {
+      display: none;
+    }
 
-        a.logout {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #16a34a;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
+    .logout {
+      padding: 12px 20px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      background: #15803d;
+      text-align: center;
+    }
 
-        a.logout:hover {
-            background-color: #15803d;
-        }
+    .logout:hover {
+      background: #14532d;
+    }
 
-        @media (max-width: 600px) {
-            form {
-                flex-direction: column;
-            }
+    /* Conteúdo principal */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
 
-            .stats {
-                flex-direction: column;
-            }
-        }
+    h2, h3 {
+      color: #16a34a;
+      margin-bottom: 15px;
+    }
 
-        .error-message {
-            color: #dc2626;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-    </style>
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    form input, form button, form select, form textarea {
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid #d1fae5;
+      outline: none;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    form input:focus, form textarea:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 5px rgba(22,163,74,0.5);
+    }
+
+    form button {
+      background-color: #16a34a;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    form button:hover {
+      background-color: #15803d;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stats div {
+      background-color: #f0fdf4;
+      padding: 15px 20px;
+      border-radius: 8px;
+      flex: 1;
+      text-align: center;
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      padding: 10px;
+      border-bottom: 1px solid #d1fae5;
+    }
+
+    ul li:last-child {
+      border-bottom: none;
+    }
+
+    .error-message {
+      color: #dc2626;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      form {
+        flex-direction: column;
+      }
+
+      .stats {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Lista de Pacientes</h2>
 
-        <!-- Form de busca -->
-        <form method="get">
-            <input type="text" name="q" placeholder="Buscar paciente" value="{{ query|default:'' }}">
-            <button type="submit">Buscar</button>
-        </form>
-
-        <!-- Form de cadastro -->
-        <h3>Cadastrar novo paciente</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Cadastrar</button>
-        </form>
-
-        <!-- Estatísticas -->
-        <div class="stats">
-            <div>Total: {{ total }}</div>
-            <div>Média de idades: {{ media_idades|floatformat:2 }}</div>
-        </div>
-
-        {% if paciente_mais_velho %}
-            <h3>Paciente mais velho: {{ paciente_mais_velho.nome_completo }} ({{ paciente_mais_velho.idade }} anos) - {{ paciente_mais_velho.telefone }}</h3>
-        {% endif %}
-
-        {% if paciente_mais_novo %}
-            <h3>Paciente mais novo: {{ paciente_mais_novo.nome_completo }} ({{ paciente_mais_novo.idade }} anos) - {{ paciente_mais_novo.telefone }}</h3>
-        {% endif %}
-
-        <!-- Lista de pacientes -->
-        <ul>
-            {% for paciente in pacientes %}
-                <li>{{ paciente.nome_completo }} - {{ paciente.idade }} anos - {{ paciente.telefone }}</li>
-            {% empty %}
-                <li>Nenhum paciente encontrado.</li>
-            {% endfor %}
-        </ul>
-
-        <a class="logout" href="{% url 'logout_command' %}">Sair</a>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title"> Clínica Vida +</span>
+      <button class="toggle-btn" id="toggleBtn">☰</button>
+    </div>
+    <div class="menu">
+  <a href="/dashboard/" class="menu-item"><i>🏠</i><span>Dashboard</span></a>
+        <a href="/consultas/" class="menu-item"><i>📋</i><span>Consultas</span></a>
+        <a href="/profissionais/" class="menu-item"><i>👨‍⚕️</i><span>Profissionais</span></a>
+        <a href="/pacientes/" class="menu-item"><i>🧑‍🤝‍🧑</i><span>Pacientes</span></a>
+        <a href="/configuracoes/" class="menu-item"><i>⚙️</i><span>Configurações</span></a>
     </div>
 
-    <script>
-        // Efeito de foco nos inputs
-        const inputs = document.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('focus', () => {
-                input.style.backgroundColor = '#f0fdf4';
-            });
-            input.addEventListener('blur', () => {
-                input.style.backgroundColor = '#ffffff';
-            });
-        });
-    </script>
+    <div class="logout">
+      <a href="{% url 'logout_command' %}" style="color:#fff; text-decoration:none;">🚪 Sair</a>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="main-content">
+    <h2>Lista de Pacientes</h2>
+
+    <!-- Form de busca -->
+    <form method="get">
+      <input type="text" name="q" placeholder="Buscar paciente" value="{{ query|default:'' }}">
+      <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Form de cadastro -->
+    <h3>Cadastrar novo paciente</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <!-- Estatísticas -->
+    <div class="stats">
+      <div>Total: {{ total }}</div>
+      <div>Média de idades: {{ media_idades|floatformat:2 }}</div>
+    </div>
+
+    {% if paciente_mais_velho %}
+      <h3>Paciente mais velho: {{ paciente_mais_velho.nome_completo }} ({{ paciente_mais_velho.idade }} anos) - {{ paciente_mais_velho.telefone }}</h3>
+    {% endif %}
+
+    {% if paciente_mais_novo %}
+      <h3>Paciente mais novo: {{ paciente_mais_novo.nome_completo }} ({{ paciente_mais_novo.idade }} anos) - {{ paciente_mais_novo.telefone }}</h3>
+    {% endif %}
+
+    <!-- Lista de pacientes -->
+    <ul>
+      {% for paciente in pacientes %}
+        <li>{{ paciente.nome_completo }} - {{ paciente.idade }} anos - {{ paciente.telefone }}</li>
+      {% empty %}
+        <li>Nenhum paciente encontrado.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("toggleBtn");
+
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+    });
+
+    // Efeito de foco nos inputs
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        input.style.backgroundColor = '#f0fdf4';
+      });
+      input.addEventListener('blur', () => {
+        input.style.backgroundColor = '#ffffff';
+      });
+    });
+  </script>
 </body>
 </html>

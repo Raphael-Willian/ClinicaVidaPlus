@@ -4,6 +4,39 @@ from django.shortcuts import render, redirect
 from pacientes.models import PacientesCadastrados
 from django.db.models import Avg
 from pacientes.forms import PacienteForm
+from consultas.forms import ConsultaForm
+from django.contrib import messages
+from consultas.models import Consulta
+from profissionais.models import Profissional
+
+
+@login_required(login_url="login_command")
+def consulta_profissional(request):
+    if request.method == 'POST':
+        form = ConsultaForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, "Consulta agendada com sucesso!")
+                return redirect("consulta_profissional_command")
+            except Exception as e:
+                messages.error(request, f"Erro ao salvar consulta: {e}")
+    else:
+        form = ConsultaForm();
+
+    consultas = Consulta.objects.all().order_by('data', 'hora_inicio')
+    pacientes = PacientesCadastrados.objects.all()
+    profissionais = Profissional.objects.all()
+
+    context = {
+        'form': form,
+        'consultas': consultas,
+        'pacientes': pacientes,
+        'profissionais': profissionais,
+    }
+
+    return render(request, 'consultapro.html', context)
+
 
 @login_required(login_url="login_command")
 def total_de_pacientes(request):
@@ -43,9 +76,9 @@ def total_de_pacientes(request):
 
 def login_profissional(request):
     if request.method == "POST":
-        email = request.POST.get("email")
+        username = request.POST.get("username")
         password = request.POST.get("password")
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
             return redirect("total_de_pacientes_command")
