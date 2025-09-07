@@ -8,6 +8,7 @@ from consultas.forms import ConsultaForm
 from django.contrib import messages
 from consultas.models import Consulta
 from profissionais.models import Profissional
+from .forms import ProfissionalCreationForm, ProfissionalUpdateForm
 
 
 @login_required(login_url="login_command")
@@ -73,6 +74,28 @@ def total_de_pacientes(request):
         "form": form
     })
 
+@login_required(login_url="login_command")
+def configuracoes(request):
+    profissional = request.user
+
+    if request.method == 'POST':
+        form = ProfissionalUpdateForm(request.POST, instance=profissional)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Alteração consluída com sucesso!")
+            return redirect('configuracoes')
+
+        else:
+            messages.error(request, "Erro ao realizar a alteração.")
+
+    else:
+        form = ProfissionalUpdateForm(instance=profissional)
+
+    return render(request, 'configuracoes.html', {'form': form})
+
+
+
+
 
 def login_profissional(request):
     if request.method == "POST":
@@ -85,6 +108,23 @@ def login_profissional(request):
         else:
             return render(request, "login.html", {"error": "Email ou senha inválidos"})
     return render(request, "login.html")
+
+
+@login_required
+def dashboard(request):
+    profissional = request.user  # pega o profissional logado
+
+    # aqui você pode puxar dados relacionados, ex:
+    consultas = Consulta.objects.filter(profissional=profissional)
+    total_consultas = consultas.count()
+
+    context = {
+        'profissional': profissional,
+        'consultas': consultas,
+
+        'total_consultas': total_consultas,
+    }
+    return render(request, 'dashboard.html', context)
 
 
 def logout_paciente(request):

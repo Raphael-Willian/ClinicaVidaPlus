@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Clínica Vida +</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: #16a34a;
+      width: 250px;
+      min-width: 80px;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s ease;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: 80px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .sidebar.collapsed .sidebar-title {
+      display: none;
+    }
+
+    .toggle-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .menu {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .menu-item i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .sidebar.collapsed .menu-item span {
+      display: none;
+    }
+
+    .logout {
+      padding: 12px 20px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      background: #15803d;
+      text-align: center;
+    }
+
+    .logout a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .logout:hover {
+      background: #14532d;
+    }
+
+    /* Conteúdo principal */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    h2 {
+      color: #16a34a;
+      margin-bottom: 20px;
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      color: #16a34a;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #374151;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .card button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .card button:hover {
+      background: #1e3a8a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Clínica Vida +</span>
+      <button class="toggle-btn" id="toggleBtn">☰</button>
+    </div>
+    <div class="menu">
+      <a href="{% url 'dashboard_command' %}" class="menu-item"><i>🏠</i><span>Dashboard</span></a>
+      <a href="{% url 'consulta_profissional_command' %}" class="menu-item"><i>📋</i><span>Consultas</span></a>
+      <a href="#" class="menu-item"><i>👨‍⚕️</i><span>Profissionais</span></a>
+      <a href="{% url 'total_de_pacientes_command' %}" class="menu-item"><i>🧑‍🤝‍🧑</i><span>Pacientes</span></a>
+      <a href="{% url 'configuracoes_command' %}" class="menu-item"><i>⚙️</i><span>Configurações</span></a>
+    </div>
+    <div class="logout">
+      <a href="#">🚪 Sair</a>
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="main-content">
+    <h2>Bem-vindo, {{ profissional.nome_completo }}</h2>
+    <p>Email: {{ profissional.email }}</p>
+    <p>Especialidade: {{ profissional.especialidade }}</p>
+    <p>Telefone: {{ profissional.telefone }}</p>
+
+    <hr><br>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Consultas</h3>
+        <p>Acompanhe suas próximas consultas e pacientes agendados.</p>
+        <button>Ver Consultas</button>
+      </div>
+
+      <div class="card">
+        <h3>Agenda</h3>
+        <p>Configure seus horários de atendimento.</p>
+        <button>Gerenciar Agenda</button>
+      </div>
+
+      <div class="card">
+        <h3>Relatórios</h3>
+        <p>Visualize estatísticas e relatórios de atendimentos.</p>
+        <button>Ver Relatórios</button>
+      </div>
+
+      <div class="card">
+        <h3>Configurações</h3>
+        <p>Atualize suas informações pessoais e preferências.</p>
+        <button onclick="window.location.href='{% url 'configuracoes_command' %}'">Editar Perfil</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("toggleBtn");
+
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+    });
+  </script>
+</body>
+</html>
