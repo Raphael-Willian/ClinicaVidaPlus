@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agendamento de Consultas - Clínica Vida +</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consultas - Clínica Vida +</title>
   <style>
     * {
       margin: 0;
@@ -19,7 +19,6 @@
       color: #111827;
     }
 
-    /* Sidebar */
     .sidebar {
       background: #16a34a;
       width: 250px;
@@ -107,7 +106,6 @@
       background: #14532d;
     }
 
-    /* Conteúdo principal */
     .main-content {
       flex: 1;
       padding: 30px;
@@ -119,55 +117,20 @@
       margin-bottom: 20px;
     }
 
-    /* Form */
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      display: grid;
-      gap: 15px;
+    .search-box {
+      margin-bottom: 20px;
     }
 
-    form label {
-      font-weight: 600;
-      margin-bottom: 5px;
-      display: block;
-      color: #15803d;
-    }
-
-    form input, form select, form textarea {
-      padding: 12px 15px;
+    .search-box input {
+      padding: 10px 14px;
+      width: 100%;
+      max-width: 400px;
       border-radius: 8px;
       border: 1px solid #d1fae5;
       outline: none;
-      transition: 0.3s;
       font-size: 14px;
-      width: 100%;
     }
 
-    form input:focus, form textarea:focus, form select:focus {
-      border-color: #16a34a;
-      box-shadow: 0 0 5px rgba(22,163,74,0.5);
-    }
-
-    form button {
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background-color: #16a34a;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    form button:hover {
-      background-color: #15803d;
-    }
-
-    /* Lista de consultas */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -232,7 +195,6 @@
     <div class="menu">
       <a href="{% url 'dashboard_command' %}" class="menu-item"><i>🏠</i><span>Dashboard</span></a>
       <a href="{% url 'consulta_profissional_command' %}" class="menu-item"><i>📋</i><span>Consultas</span></a>
-      <a href="#" class="menu-item"><i>👨‍⚕️</i><span>Profissionais</span></a>
       <a href="{% url 'total_de_pacientes_command' %}" class="menu-item"><i>🧑‍🤝‍🧑</i><span>Pacientes</span></a>
       <a href="{% url 'configuracoes_command' %}" class="menu-item"><i>⚙️</i><span>Configurações</span></a>
     </div>
@@ -243,45 +205,15 @@
 
   <!-- Conteúdo -->
   <div class="main-content">
-    <h2>Agendamento de Consultas</h2>
+    <h2>Consultas Agendadas</h2>
 
-    <!-- Formulário -->
-    <form method="post">
-      {% csrf_token %}
-      <label for="pacientes">Paciente</label>
-      <select id="pacientes" name="pacientes" required>
-        {% for paciente in pacientes %}
-          <option value="{{ paciente.id }}">{{ paciente.nome_completo }}</option>
-        {% endfor %}
-      </select>
-
-      <label for="profissional">Profissional</label>
-      <select id="profissional" name="profissional" required>
-        {% for p in profissionais %}
-          <option value="{{ p.id }}">{{ p.nome_completo }}</option>
-        {% endfor %}
-      </select>
-
-      <label for="data">Data</label>
-      <input type="date" id="data" name="data" required>
-
-      <label for="hora_inicio">Hora Início</label>
-      <input type="time" id="hora_inicio" name="hora_inicio" required>
-
-      <label for="hora_do_fim">Hora Fim</label>
-      <input type="time" id="hora_do_fim" name="hora_do_fim" required>
-
-      <label for="observacoes">Observações</label>
-      <textarea id="observacoes" name="observacoes"></textarea>
-
-      <label for="valor_da_consulta">Valor</label>
-      <input type="number" id="valor_da_consulta" name="valor_da_consulta" value="70" step="0.01">
-
-      <button type="submit">Agendar</button>
-    </form>
+    <!-- Barra de busca -->
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Buscar por paciente, profissional, status...">
+    </div>
 
     <!-- Lista de consultas -->
-    <table>
+    <table id="consultasTable">
       <thead>
         <tr>
           <th>Paciente</th>
@@ -289,6 +221,7 @@
           <th>Data</th>
           <th>Hora</th>
           <th>Valor</th>
+          <th>Status Pagamento</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -300,14 +233,19 @@
           <td>{{ consulta.data }}</td>
           <td>{{ consulta.hora_inicio }} - {{ consulta.hora_do_fim }}</td>
           <td>R$ {{ consulta.valor_da_consulta }}</td>
+          <td>{{ consulta.get_status_do_pagamento_display }}</td>
           <td class="actions">
-            <button class="edit-btn">Editar</button>
-            <button class="delete-btn">Cancelar</button>
+            <a href="{% url 'editar_consulta' consulta.id %}" class="edit-btn">Editar</a>
+            <form action="{% url 'remover_consulta' consulta.id %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="delete-btn" onclick="return confirm('Tem certeza que deseja cancelar esta consulta?')">Cancelar</button>
+            </form>
           </td>
+
         </tr>
         {% empty %}
         <tr>
-          <td colspan="6">Nenhuma consulta agendada.</td>
+          <td colspan="7">Nenhuma consulta agendada.</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -320,6 +258,18 @@
 
     toggleBtn.addEventListener("click", () => {
       sidebar.classList.toggle("collapsed");
+    });
+
+    // Filtro de busca na tabela
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("keyup", function () {
+      const searchTerm = this.value.toLowerCase();
+      const rows = document.querySelectorAll("#consultasTable tbody tr");
+
+      rows.forEach(row => {
+        const rowText = row.innerText.toLowerCase();
+        row.style.display = rowText.includes(searchTerm) ? "" : "none";
+      });
     });
   </script>
 </body>

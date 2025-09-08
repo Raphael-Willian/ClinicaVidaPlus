@@ -1,14 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from pacientes.models import PacientesCadastrados
 from django.db.models import Avg
 from pacientes.forms import PacienteForm
-from consultas.forms import ConsultaForm
+from consultas.forms import ConsultaForm, ConsultaEditarForm
 from django.contrib import messages
 from consultas.models import Consulta
 from profissionais.models import Profissional
-from .forms import ProfissionalCreationForm, ProfissionalUpdateForm
+from .forms import ProfissionalUpdateForm
 
 
 @login_required(login_url="login_command")
@@ -93,8 +93,23 @@ def configuracoes(request):
 
     return render(request, 'configuracoes.html', {'form': form})
 
+@login_required(login_url="login_command")
+def editar_consulta(request, id):
+    consulta = get_object_or_404(Consulta, id=id)
+    form = ConsultaEditarForm(request.POST or None, instance=consulta)
 
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('consulta_profissional_command')
 
+    return render(request, 'editar_consulta.html', {'form': form})
+
+@login_required(login_url="login_command")
+def remover_consulta(request, id):
+    consulta = get_object_or_404(Consulta, id=id)
+    if request.method == 'POST':
+        consulta.delete()
+        return redirect('consultas')
 
 
 def login_profissional(request):

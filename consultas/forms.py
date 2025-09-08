@@ -14,3 +14,8 @@ class ConsultaForm(forms.ModelForm):
             'hora_fim': forms.TimeInput(attrs={'type': 'time', 'id': 'id_hora_fim', 'class': 'form-control'}),
             'observacoes': forms.Textarea(attrs={'rows': 3}),
         }
+
+class ConsultaEditarForm(forms.ModelForm):
+    class Meta:
+        model = Consulta
+        fields = '__all__'

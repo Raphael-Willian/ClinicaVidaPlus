@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Configurações do Usuário - Clínica Vida +</title>
+  <title>Editar Consulta - Clínica Vida +</title>
   <style>
     * {
       margin: 0;
@@ -19,7 +19,6 @@
       color: #111827;
     }
 
-    /* Sidebar */
     .sidebar {
       background: #16a34a;
       width: 250px;
@@ -45,8 +44,8 @@
       font-weight: bold;
     }
 
-    .sidebar.collapsed .sidebar-title {
-      display: none;
+    .sidebar-title {
+      margin-left: 8px;
     }
 
     .toggle-btn {
@@ -83,7 +82,8 @@
       font-size: 18px;
     }
 
-    .sidebar.collapsed .menu-item span {
+    .sidebar.collapsed .menu-item span,
+    .sidebar.collapsed .sidebar-title {
       display: none;
     }
 
@@ -103,7 +103,6 @@
       background: #14532d;
     }
 
-    /* Conteúdo principal */
     .main-content {
       flex: 1;
       padding: 30px;
@@ -115,22 +114,21 @@
       margin-bottom: 20px;
     }
 
-    /* Form */
     form {
       background: #fff;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
+      max-width: 600px;
       display: grid;
       gap: 15px;
     }
 
     form label {
       font-weight: 600;
+      color: #15803d;
       margin-bottom: 5px;
       display: block;
-      color: #15803d;
     }
 
     form input, form select, form textarea {
@@ -143,7 +141,7 @@
       width: 100%;
     }
 
-    form input:focus, form textarea:focus, form select:focus {
+    form input:focus, form select:focus, form textarea:focus {
       border-color: #16a34a;
       box-shadow: 0 0 5px rgba(22,163,74,0.5);
     }
@@ -161,45 +159,6 @@
 
     form button:hover {
       background-color: #15803d;
-    }
-
-    /* Cards */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .card h3 {
-      color: #16a34a;
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      color: #374151;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
-
-    .card button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      background: #2563eb;
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .card button:hover {
-      background: #1e3a8a;
     }
   </style>
 </head>
@@ -224,58 +183,12 @@
 
   <!-- Conteúdo -->
   <div class="main-content">
-    <h2>Configurações do Usuário</h2>
-
-    <!-- Dados pessoais -->
-    <form method="post" action="{% url 'configuracoes_command' %}">
+    <h2>Editar Consulta</h2>
+    <form method="post">
       {% csrf_token %}
-      <input type="hidden" name="form_type" value="dados">
-
-      <h3>Meus Dados</h3>
       {{ form.as_p }}
-      <button type="submit">Salvar Dados</button>
+      <button type="submit">Salvar</button>
     </form>
-
-    <!-- Configurações de Agenda -->
-    <form method="post" action="{% url 'configuracoes_command' %}">
-      {% csrf_token %}
-      <input type="hidden" name="form_type" value="agenda">
-
-      <h3>Minha Agenda</h3>
-      <label for="dias_atendimento">Dias de Atendimento</label>
-      <select id="dias_atendimento" name="dias_atendimento" multiple>
-        <option>Segunda-feira</option>
-        <option>Terça-feira</option>
-        <option>Quarta-feira</option>
-        <option>Quinta-feira</option>
-        <option>Sexta-feira</option>
-        <option>Sábado</option>
-      </select>
-
-      <label for="horario_inicio">Horário Início</label>
-      <input type="time" id="horario_inicio" name="horario_inicio">
-
-      <label for="horario_fim">Horário Fim</label>
-      <input type="time" id="horario_fim" name="horario_fim">
-
-      <button type="submit">Salvar Agenda</button>
-    </form>
-
-    <!-- Preferências -->
-    <div class="cards">
-      <div class="card">
-        <h3>Notificações</h3>
-        <p>Escolha como deseja receber lembretes sobre suas consultas.</p>
-        <button type="button">Configurar</button>
-      </div>
-
-      <div class="card">
-        <h3>Alterar Senha</h3>
-        <p>Altere sua senha de acesso ao sistema com segurança.</p>
-          <button type="button">Alterar</button>
-        </a>
-      </div>
-    </div>
   </div>
 
   <script>
